@@ -1,0 +1,179 @@
+
+git clone https://github.com/sisoputnfrba/so-deploy.git
+cd so-deploy
+
+Comando para hacer deploy:
+./deploy.sh -r=release -p=utils -p=kernel -p=cpu -p=memoria -p=entradasalida tp-2024-1c-GrupoS01C
+
+
+
+Consultar ip:
+    - ifconfig
+
+Conectar consola:
+    - ssh utnso@192.168.XXX.YYY
+
+Preparaciones previas:
+    - Cargar las ip en ips.config (todos los modulos menos memoria)
+    - nano ./configs/ips.config
+
+Prueba plani:
+
+    Parte 1:
+        - ./bin/memoria ./configs/plani.config
+        - ./bin/cpu ./configs/plani.config
+        - ./bin/kernel ./configs/plani_fifo.config
+        - ./bin/entradasalida SLP1 ./configs/SLP1.config
+
+        En kernel:
+            - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_PLANI
+            - INICIAR_PLANIFICACION
+
+        Para finalizar PLANI_4:
+            - FINALIZAR_PROCESO 3
+
+    Parte 2:
+        - ./bin/memoria ./configs/plani.config
+        - ./bin/cpu ./configs/plani.config
+        - ./bin/kernel ./configs/plani_rr.config
+        - ./bin/entradasalida SLP1 ./configs/SLP1.config
+
+        En kernel:
+            - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_PLANI
+            - INICIAR_PLANIFICACION
+
+        Para finalizar PLANI_4:
+            - FINALIZAR_PROCESO 3
+
+    Parte 3:
+            - ./bin/memoria ./configs/plani.config
+            - ./bin/cpu ./configs/plani.config
+            - ./bin/kernel ./configs/plani_vrr.config
+            - ./bin/entradasalida SLP1 ./configs/SLP1.config
+
+            En kernel:
+                - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_PLANI
+                - INICIAR_PLANIFICACION
+
+            Para finalizar PLANI_4:
+                - FINALIZAR_PROCESO 3
+
+            - EXIT
+
+Prueba deadlock:
+    - ./bin/memoria ./configs/deadlock.config
+    - ./bin/cpu ./configs/deadlock.config
+    - ./bin/kernel ./configs/deadlock.config
+    - ./bin/entradasalida ESPERA ./configs/ESPERA.config
+
+    En kernel:
+        - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_DEADLOCK
+        - INICIAR_PLANIFICACION
+
+    Finalizar cualquiera:
+        - FINALIZAR_PROCESO 2
+
+    - EXIT
+
+Prueba memoria y TLB:
+    Parte 1:
+        - ./bin/memoria ./configs/memoria.config
+        - ./bin/cpu ./configs/memoria_fifo.config
+        - ./bin/kernel ./configs/memoria.config
+
+        En kernel:
+            - INICIAR_PROCESO MEMORIA_1
+            - INICIAR_PLANIFICACION
+
+        - EXIT
+
+    Parte 2:
+        - ./bin/memoria ./configs/memoria.config
+        - ./bin/cpu ./configs/memoria_lru.config
+        - ./bin/kernel ./configs/memoria.config
+
+        En kernel:
+            - INICIAR_PLANIFICACION
+            - INICIAR_PROCESO MEMORIA_1
+            (Esperar que termine)
+            - INICIAR_PROCESO MEMORIA_2
+            (Esperar que termine)
+            - INICIAR_PROCESO MEMORIA_3
+
+        - EXIT
+
+Prueba io:
+    - ./bin/memoria ./configs/memoria.config
+    - ./bin/cpu ./configs/memoria_lru.config
+    - ./bin/kernel ./configs/memoria.config
+    - ./bin/entradasalida GENERICA ./configs/GENERICA.config
+    - ./bin/entradasalida TECLADO ./configs/TECLADO.config
+    - ./bin/entradasalida MONITOR ./configs/MONITOR.config
+
+    En kernel:
+        - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_IO
+        - INICIAR_PLANIFICACION
+
+    En TECLADO:
+     - WAR NEVER CHANGES...
+     - Sistemas Operativos 2c2023
+
+Prueba FS:
+    Parados en la carpeta de entradasalida:
+        - mkdir dialfs
+        - cd dialfs
+        - pwd (me da el path y lo copio)
+        - cd ..
+        - nano ./configs/FS.config (actualizo el path)
+
+    - ./bin/memoria ./configs/fs.config
+    - ./bin/cpu ./configs/fs.config
+    - ./bin/kernel ./configs/fs.config
+    - ./bin/entradasalida FS ./configs/FS.config
+    - ./bin/entradasalida TECLADO ./configs/TECLADO.config
+    - ./bin/entradasalida MONITOR ./configs/MONITOR.config
+
+    Parte 1:
+        En kernel:
+            - INICIAR_PROCESO FS_1
+            - INICIAR_PROCESO FS_2
+            - INICIAR_PLANIFICACION
+        En teclado:
+            - Fallout 1 Fallout 2 Fallout 3 Fallout: New Vegas Fallout 4 Fallout 76
+        
+        (espero que termine)
+        - EXIT
+
+    Parte 2:
+        (arranco todo de vuelta)
+        En kernel:
+            - INICIAR_PROCESO FS_3
+            - INICIAR_PROCESO FS_4
+            - INICIAR_PLANIFICACION
+        
+        (espero que termine)
+        - EXIT
+
+Prueba Salvation's Edge:
+    (Abro htop en las MV)
+
+    - ./bin/memoria ./configs/fs.config
+    - ./bin/cpu ./configs/fs.config
+    - ./bin/kernel ./configs/fs.config
+    - ./bin/entradasalida SLP1 ./configs/SLP1.config
+    - ./bin/entradasalida ESPERA ./configs/ESPERA.config
+    - ./bin/entradasalida GENERICA ./configs/GENERICA.config
+    - ./bin/entradasalida TECLADO ./configs/TECLADO.config
+    - ./bin/entradasalida MONITOR ./configs/MONITOR.config
+    
+    En kernel:
+        - EJECUTAR_SCRIPT ./scripts_kernel/PRUEBA_SALVATIONS_EDGE
+        - INICIAR_PLANIFICACION
+
+    - MULTIPROGRAMACION 100
+    - PROCESO_ESTADO
+    - EXIT
+
+
+
+
